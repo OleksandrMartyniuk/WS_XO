@@ -24,6 +24,8 @@ namespace GameClient
             auth = new Authorization();
             ResponseHandler.loginFail += (x) => Invoke(new Action<string>(On_LoginFailed), x);
             ResponseHandler.loginSuccess += (x) => Invoke(new Action<string>(On_LoginSuccess), x);
+
+            ResponseHandler.notificationLobby += notification;
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
         private void LogIn(object sender, EventArgs e)
@@ -31,7 +33,10 @@ namespace GameClient
             this.Hide();
             this.Close();
         }
-  
+        private void notification(object sender)
+        {
+            MessageBox.Show(sender.ToString());
+        }
         private void On_LoginSuccess(string Username)
         {
             Client.Username = Username;
@@ -58,21 +63,24 @@ namespace GameClient
             }
             return true;
         }
-
+        private void ServerOpen()
+        {
+            try
+            {
+                Client.StartClient();
+            }
+            catch
+            {
+                MessageBox.Show("Server Disconnect");
+            }
+        }
         private void btn_connect_Click(object sender, EventArgs e)
         {
             string login = login_box.Text;
             string password = password_box.Text;
             if (IsValid(login, password) == true)
             {
-                try
-                {
-                    Client.StartClient();
-                }
-                catch
-                {
-                    MessageBox.Show("Server Disconnect");
-                }
+                ServerOpen();
                 auth.SendLogIn(login, password);
             }
           
@@ -118,6 +126,7 @@ namespace GameClient
             string name = apiAuth.Tr(info);
             if (name != "")
             {
+                ServerOpen();
                 auth.LoginGmail(name);
             }
         }
@@ -131,6 +140,7 @@ namespace GameClient
             string name = apiAuth.Tr(info);
             if (name != null)
             {
+                ServerOpen();
                 auth.LoginFacebook(name);
             }
         }
@@ -154,6 +164,7 @@ namespace GameClient
                 string email =  email_box.Text.ToString();
                 if (IsValidEmail(email) == true)
                 {
+                    ServerOpen();
                     auth.LoginReg(login, password, email);
                 }
             }
@@ -164,6 +175,7 @@ namespace GameClient
             string email = email_box.Text.ToString();
             if (IsValidEmail(email) == true)
             {
+                ServerOpen();
                 auth.LoginForgot(email);
             }
         }

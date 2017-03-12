@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using GameClient.API.Networking;
 using Core;
+using Newtonsoft.Json;
 
 namespace GameClient
 {
@@ -16,19 +17,16 @@ namespace GameClient
     {
         string gamestorage;
         int roomNumber;
-        RoomDialog room;
-        public XO(RoomDialog room,object[] args)
+        public XO()
         {
             InitializeComponent();
+        }
+        public XO(object[] args) { 
+            InitializeComponent();
             roomNumber = Convert.ToInt32(args[0].ToString());
-            this.room = room;
-            room.Controls.Add(this);
-            room.Location = new Point(21, -1);
-            room.Name = "xo";
-            room.Size = new Size(429, 292);
-            room.TabIndex = 0;
             statusPlay(args[2].ToString());
             ResponseHandler.move += (x) => btn_xo_Move(x);
+            turn_text.Text = "Name: " + Client.Username;
         }
      
         
@@ -43,54 +41,55 @@ namespace GameClient
             if (args.ToString() == name)
             {
                 gamestorage = "X";
-                label_turn.Text = "play: " + name + " go";
+                status_text.Text = "play: " + name + " go";
             }
             else
             {
                 gamestorage = "O";
-                label_turn.Text = "play: " + gamestorage + " wait";
+                status_text.Text = "play: " + gamestorage + " wait";
             }
         }
 
-        private void btn_xo_Move(object arg)
+        private void btn_xo_Move(object x)
         {
-            if (gamestorage == arg.ToString())
+            object[] args = JsonConvert.DeserializeObject<object[]>(x.ToString());
+            if (gamestorage == args[0].ToString())
             {
-                label_turn.Text = "play: " + gamestorage + " wait";
+                status_text.Text = "play: " + gamestorage + " wait";
             }
             else
             {
-                label_turn.Text = "play: " + gamestorage + " go";
+                status_text.Text = "play: " + gamestorage + " go";
             }
           
-            switch (arg.ToString())
+            switch (args[1].ToString())
             {
                 case "0":
-                    btn_xo1.Text = arg.ToString();
+                    btn_xo1.Text = args[0].ToString();
                     break;
                 case "1":
-                    btn_xo2.Text = arg.ToString();
+                    btn_xo2.Text = args[0].ToString();
                     break;
                 case "2":
-                    btn_xo3.Text = arg.ToString();
+                    btn_xo3.Text = args[0].ToString();
                     break;
                 case "3":
-                    btn_xo4.Text = arg.ToString();
+                    btn_xo4.Text = args[0].ToString();
                     break;
                 case "4":
-                    btn_xo5.Text = arg.ToString();
+                    btn_xo5.Text = args[0].ToString();
                     break;
                 case "5":
-                    btn_xo6.Text = arg.ToString();
+                    btn_xo6.Text = args[0].ToString();
                     break;
                 case "6":
-                    btn_xo7.Text = arg.ToString();
+                    btn_xo7.Text = args[0].ToString();
                     break;
                 case "7":
-                    btn_xo8.Text = arg.ToString();
+                    btn_xo8.Text = args[0].ToString();
                     break;
                 case "8":
-                    btn_xo9.Text = arg.ToString();
+                    btn_xo9.Text = args[0].ToString();
                     break;
             }
         }

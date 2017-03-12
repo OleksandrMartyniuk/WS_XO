@@ -1,4 +1,6 @@
-﻿namespace GameClient
+﻿using System.Drawing;
+
+namespace GameClient
 {
     partial class XO
     {
@@ -37,12 +39,13 @@
             this.btn_xo3 = new System.Windows.Forms.Button();
             this.btn_xo2 = new System.Windows.Forms.Button();
             this.btn_xo1 = new System.Windows.Forms.Button();
-            this.label_turn = new System.Windows.Forms.Label();
+            this.turn_text = new System.Windows.Forms.Label();
+            this.status_text = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btn_xo9
             // 
-            this.btn_xo9.Location = new System.Drawing.Point(253, 186);
+            this.btn_xo9.Location = new System.Drawing.Point(228, 176);
             this.btn_xo9.Name = "btn_xo9";
             this.btn_xo9.Size = new System.Drawing.Size(102, 52);
             this.btn_xo9.TabIndex = 17;
@@ -52,7 +55,7 @@
             // 
             // btn_xo8
             // 
-            this.btn_xo8.Location = new System.Drawing.Point(145, 186);
+            this.btn_xo8.Location = new System.Drawing.Point(120, 176);
             this.btn_xo8.Name = "btn_xo8";
             this.btn_xo8.Size = new System.Drawing.Size(102, 52);
             this.btn_xo8.TabIndex = 16;
@@ -62,7 +65,7 @@
             // 
             // btn_xo7
             // 
-            this.btn_xo7.Location = new System.Drawing.Point(37, 186);
+            this.btn_xo7.Location = new System.Drawing.Point(12, 176);
             this.btn_xo7.Name = "btn_xo7";
             this.btn_xo7.Size = new System.Drawing.Size(102, 52);
             this.btn_xo7.TabIndex = 15;
@@ -72,7 +75,7 @@
             // 
             // btn_xo6
             // 
-            this.btn_xo6.Location = new System.Drawing.Point(253, 128);
+            this.btn_xo6.Location = new System.Drawing.Point(228, 118);
             this.btn_xo6.Name = "btn_xo6";
             this.btn_xo6.Size = new System.Drawing.Size(102, 52);
             this.btn_xo6.TabIndex = 14;
@@ -82,7 +85,7 @@
             // 
             // btn_xo5
             // 
-            this.btn_xo5.Location = new System.Drawing.Point(145, 128);
+            this.btn_xo5.Location = new System.Drawing.Point(120, 118);
             this.btn_xo5.Name = "btn_xo5";
             this.btn_xo5.Size = new System.Drawing.Size(102, 52);
             this.btn_xo5.TabIndex = 13;
@@ -92,7 +95,7 @@
             // 
             // btn_xo4
             // 
-            this.btn_xo4.Location = new System.Drawing.Point(37, 128);
+            this.btn_xo4.Location = new System.Drawing.Point(12, 118);
             this.btn_xo4.Name = "btn_xo4";
             this.btn_xo4.Size = new System.Drawing.Size(102, 52);
             this.btn_xo4.TabIndex = 12;
@@ -102,7 +105,7 @@
             // 
             // btn_xo3
             // 
-            this.btn_xo3.Location = new System.Drawing.Point(253, 70);
+            this.btn_xo3.Location = new System.Drawing.Point(228, 60);
             this.btn_xo3.Name = "btn_xo3";
             this.btn_xo3.Size = new System.Drawing.Size(102, 52);
             this.btn_xo3.TabIndex = 11;
@@ -112,7 +115,7 @@
             // 
             // btn_xo2
             // 
-            this.btn_xo2.Location = new System.Drawing.Point(145, 70);
+            this.btn_xo2.Location = new System.Drawing.Point(120, 60);
             this.btn_xo2.Name = "btn_xo2";
             this.btn_xo2.Size = new System.Drawing.Size(102, 52);
             this.btn_xo2.TabIndex = 10;
@@ -122,7 +125,7 @@
             // 
             // btn_xo1
             // 
-            this.btn_xo1.Location = new System.Drawing.Point(37, 70);
+            this.btn_xo1.Location = new System.Drawing.Point(12, 60);
             this.btn_xo1.Name = "btn_xo1";
             this.btn_xo1.Size = new System.Drawing.Size(102, 52);
             this.btn_xo1.TabIndex = 9;
@@ -130,19 +133,28 @@
             this.btn_xo1.UseVisualStyleBackColor = true;
             this.btn_xo1.Click += new System.EventHandler(this.btn_xo_Click);
             // 
-            // label_turn
+            // turn_text
             // 
-            this.label_turn.AutoSize = true;
-            this.label_turn.Location = new System.Drawing.Point(47, 32);
-            this.label_turn.Name = "label_turn";
-            this.label_turn.Size = new System.Drawing.Size(0, 13);
-            this.label_turn.TabIndex = 18;
+            this.turn_text.AutoSize = true;
+            this.turn_text.Location = new System.Drawing.Point(47, 32);
+            this.turn_text.Name = "turn_text";
+            this.turn_text.Size = new System.Drawing.Size(0, 13);
+            this.turn_text.TabIndex = 18;
+            // 
+            // status_text
+            // 
+            this.status_text.AutoSize = true;
+            this.status_text.Location = new System.Drawing.Point(222, 32);
+            this.status_text.Name = "status_text";
+            this.status_text.Size = new System.Drawing.Size(0, 13);
+            this.status_text.TabIndex = 19;
             // 
             // XO
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label_turn);
+            this.Controls.Add(this.status_text);
+            this.Controls.Add(this.turn_text);
             this.Controls.Add(this.btn_xo9);
             this.Controls.Add(this.btn_xo8);
             this.Controls.Add(this.btn_xo7);
@@ -153,10 +165,11 @@
             this.Controls.Add(this.btn_xo2);
             this.Controls.Add(this.btn_xo1);
             this.Name = "XO";
-            this.Size = new System.Drawing.Size(393, 309);
+            this.Location = new System.Drawing.Point(24, 41);
+            this.Size = new System.Drawing.Size(339, 237);
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            this.TabIndex = 0;
         }
 
         #endregion
@@ -170,6 +183,7 @@
         private System.Windows.Forms.Button btn_xo3;
         private System.Windows.Forms.Button btn_xo2;
         private System.Windows.Forms.Button btn_xo1;
-        public System.Windows.Forms.Label label_turn;
+        public System.Windows.Forms.Label turn_text;
+        public System.Windows.Forms.Label status_text;
     }
 }

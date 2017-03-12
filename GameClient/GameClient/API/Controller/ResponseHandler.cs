@@ -23,10 +23,20 @@ namespace GameClient
             switch (req.Module)
             {
                 case "Auth":
-
                     switch (req.Cmd)
                     {
                         case "LogIn": loginSuccess?.Invoke(req.Args.ToString()); break;
+                        case "Forgot":
+                            switch (req.Args.ToString())
+                            {
+                                case "Success":
+                                    notificationLobby("password sent by email");
+                                    break;
+                                case "Error":
+                                    notificationLobby("No such user exists. Please make sure that you entered your login");
+                                    break;
+                            }
+                            break;
                     }
                     break;
                 case "Lobby":
@@ -49,15 +59,13 @@ namespace GameClient
                     {
                         case "Start":
                             start?.Invoke(req.Args);
-                            close?.Invoke();
-                            enabled?.Invoke();
                             break;
                         case "Move":
                             move?.Invoke(req.Args);
-                        break;
+                            break;
                         case "Over":
-                             end?.Invoke();
-                        break;
+                            gamesOver?.Invoke(req.Args);
+                            break;
                     }
                     break;
             }
@@ -66,20 +74,19 @@ namespace GameClient
         public delegate void loginDelegate(string username);
         public static event loginDelegate loginSuccess;
         public static event loginDelegate loginFail;
-        
+       
+
         public delegate void lobbyDelegate(object Client);
         public static event lobbyDelegate refreshClients;
         public static event lobbyDelegate notificationLobby;
         public static event lobbyDelegate answer;
         public static event lobbyDelegate start;
         public static event lobbyDelegate move;
-
+        public static event lobbyDelegate gamesOver;
 
         public delegate void notificationDelegate();
         public static event notificationDelegate cancle;
         public static event notificationDelegate wait;
-        public static event notificationDelegate close;
-        public static event notificationDelegate enabled;
-        public static event notificationDelegate end;
+       
     }
 }

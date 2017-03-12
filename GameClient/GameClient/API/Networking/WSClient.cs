@@ -24,11 +24,14 @@ namespace  GameClient.API.Networking
 
         public void StartClient()
         {
-            socket = new WebSocket(wsURI); 
-            socket.Open();                       
-            socket.MessageReceived += InvokeMessageReceived;
+            if (socket == null)
+            {
+                socket = new WebSocket(wsURI);
+                socket.Open();
+                socket.MessageReceived += InvokeMessageReceived;
 
-            socket.Error += (sender, args) => NewErrorMessage?.Invoke(args.Exception.Message);
+                socket.Error += (sender, args) => NewErrorMessage?.Invoke(args.Exception.Message);
+            }
         }
 
         private void InvokeMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -39,7 +42,11 @@ namespace  GameClient.API.Networking
 
         public void AddRequest(string message)
         {
-            socket.Send(message);
+            if (socket != null)
+            {
+                socket.Send(message);
+            }
+            
         }
 
         public void Disconnect()

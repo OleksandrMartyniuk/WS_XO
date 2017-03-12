@@ -80,14 +80,25 @@
     <Compile Include="API\ApiSend.cs" />
     <Compile Include="API\Controller\RequestManager.cs" />
     <Compile Include="API\Controller\ResponseHandler.cs" />
-    <Compile Include="GUI\AnswerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\AnswerForm.Designer.cs">
-      <DependentUpon>AnswerForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="API\Game.cs" />
     <Compile Include="API\Authorization.cs" />
+    <Compile Include="GUI\Game\Answer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Game\Answer.Designer.cs">
+      <DependentUpon>Answer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Game\Lobby.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Game\Lobby.Designer.cs">
+      <DependentUpon>Lobby.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Game\Wait.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GUI\Game\Wait.Designer.cs">
+      <DependentUpon>Wait.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Game\XO.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -112,20 +123,14 @@
     <Compile Include="API\Networking\WSClient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="GUI\Game\RoomDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\Game\RoomDialog.Designer.cs">
-      <DependentUpon>RoomDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUI\WaitForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUI\WaitForm.Designer.cs">
-      <DependentUpon>WaitForm.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="GUI\AnswerForm.resx">
-      <DependentUpon>AnswerForm.cs</DependentUpon>
+    <EmbeddedResource Include="GUI\Game\Answer.resx">
+      <DependentUpon>Answer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Game\Lobby.resx">
+      <DependentUpon>Lobby.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GUI\Game\Wait.resx">
+      <DependentUpon>Wait.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUI\Game\XO.resx">
       <DependentUpon>XO.cs</DependentUpon>
@@ -145,12 +150,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="GUI\Game\RoomDialog.resx">
-      <DependentUpon>RoomDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUI\WaitForm.resx">
-      <DependentUpon>WaitForm.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

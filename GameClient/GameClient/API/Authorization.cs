@@ -24,26 +24,26 @@ namespace GameClient
         {
             Client.AddRequest(new RequestObject("Auth", "LogIn", new object[] { name, password }));
         }
-        public void SendLogout(object sender, EventArgs e)
+        public void SendLogout()
         {
             Client.AddRequest(new RequestObject("Auth", "LogOut", "null"));
         }
         public void LoginGmail(string name)
         {
-            Client.AddRequest(new RequestObject("login", "Gmail", name));
+            Client.AddRequest(new RequestObject("Auth", "Gmail", name));
         }
         public void LoginFacebook(string name)
         {
-            Client.AddRequest(new RequestObject("login", "Facebook", name));
+            Client.AddRequest(new RequestObject("Auth", "Facebook", name));
         }
         public void LoginReg(string name, string password, string email)
         {
-            Client.AddRequest(new RequestObject("login", "Registration",
+            Client.AddRequest(new RequestObject("Auth", "Registration",
                 new object[] { name, password, email }));
         }
         public void LoginForgot(string name)
         {
-            Client.AddRequest(new RequestObject("login", "Forgot", name));
+            Client.AddRequest(new RequestObject("Auth", "Forgot", name));
         }
     }
 }

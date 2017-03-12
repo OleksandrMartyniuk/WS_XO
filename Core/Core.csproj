@@ -4,16 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1BEC9F6E-BE3F-4C3B-BC7B-B83747A76BD1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{DDFF7148-70A8-419B-9B6F-45092AC5690D}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameServer</RootNamespace>
-    <AssemblyName>GameServer</AssemblyName>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -24,7 +22,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,13 +31,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,49 +46,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Session\Authorization.cs" />
-    <Compile Include="Connection\Clients.cs" />
-    <Compile Include="Session\Game.cs" />
-    <Compile Include="Game\IGame.cs" />
-    <Compile Include="Game\Room.cs" />
-    <Compile Include="Session\Lobby.cs" />
-    <Compile Include="Game\Rooms.cs" />
-    <Compile Include="Session\HandShake.cs" />
-    <Compile Include="Connection\Client.cs" />
-    <Compile Include="Session\CommandDispacher.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Models\ChatMessage.cs" />
+    <Compile Include="Models\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Connection\Server.cs" />
-    <Compile Include="Game\XO.cs" />
+    <Compile Include="Models\RequestObject.cs" />
+    <Compile Include="Models\RoomObj.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AuthServer\AuthServer.csproj">
-      <Project>{c24cf4b5-8ab1-4f41-86e4-412baba9c244}</Project>
-      <Name>AuthServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{0ee8b9a2-7341-4c15-9d4d-8c249e204ad2}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="html\javascript\authorization.js" />
-    <Content Include="html\javascript\connection.js" />
-    <Content Include="html\javascript\facebook.js" />
-    <Content Include="html\javascript\Game.js" />
-    <Content Include="html\javascript\HandShake.js" />
-    <Content Include="html\javascript\Lobby.js" />
-    <Content Include="html\javascript\Request.js" />
-    <Content Include="html\javascript\ShowModules.js" />
-    <Content Include="html\lib\jquery-3.1.1.min.js" />
-    <Content Include="html\lib\sdk.js" />
-    <Content Include="html\style.css" />
-    <Content Include="html\WebClientXO.html" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

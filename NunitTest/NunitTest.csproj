@@ -55,7 +55,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DataProviderBase.cs" />
     <Compile Include="FileMock.cs" />
     <Compile Include="Nunit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
