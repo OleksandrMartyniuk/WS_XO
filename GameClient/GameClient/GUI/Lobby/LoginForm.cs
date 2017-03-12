@@ -40,14 +40,14 @@ namespace GameClient
         private void On_LoginSuccess(string Username)
         {
             Client.Username = Username;
-            var chat = new LobbyForm();
+            var chat = new LobbyForm(this);
             chat.Location = Location;
             chat.StartPosition = StartPosition;
             chat.Show();
-            this.Hide();
+            LoginForm_FormClosed(null, null);
         }
 
-        private bool IsValid(string login,string password)
+    private bool IsValid(string login,string password)
         {
             if (login == null || login == "")
             {
@@ -113,8 +113,10 @@ namespace GameClient
 
         private void LoginForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-          //  auth.LogIn -= LogIn;
-          //  this.Dispose();
+            ResponseHandler.loginFail -= (x) => Invoke(new Action<string>(On_LoginFailed), x);
+            ResponseHandler.loginSuccess -= (x) => Invoke(new Action<string>(On_LoginSuccess), x);
+            ResponseHandler.notificationLobby -= notification;
+            this.Hide();
         }
 
         private void btn_gmail_Click(object sender, EventArgs e)

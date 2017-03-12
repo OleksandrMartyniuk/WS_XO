@@ -18,7 +18,7 @@ namespace GameClient.GUI.Game
         {
             InitializeComponent();
             object[] args = JsonConvert.DeserializeObject<object[]>(arg.ToString());
-            label1.Text = args[0] + " приглашает вас поиграть в " + args[1];
+            label1.Text = args[0] + " invites you to play in " + args[1];
             this.args = args;
         }
 

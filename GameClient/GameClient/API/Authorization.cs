@@ -26,7 +26,7 @@ namespace GameClient
         }
         public void SendLogout()
         {
-            Client.AddRequest(new RequestObject("Auth", "LogOut", "null"));
+            Client.AddRequest(new RequestObject("Auth", "LogOut", Client.Username));
         }
         public void LoginGmail(string name)
         {

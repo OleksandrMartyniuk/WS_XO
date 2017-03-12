@@ -16,10 +16,11 @@ namespace GameClient
 {
     public partial class LobbyForm : Form
     {
-     
-        public LobbyForm()
+        LoginForm login;
+        public LobbyForm(LoginForm login)
         {
             InitializeComponent();
+            this.login = login;
             CheckForIllegalCrossThreadCalls = false;
             LobbyHandler();
             ResponseHandler.wait +=()=> Invoke(new Action(WaitHandler));
@@ -73,14 +74,18 @@ namespace GameClient
         
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            new Authorization().SendLogout();
             ResponseHandler.wait -= () => Invoke(new Action(WaitHandler));
             ResponseHandler.notificationLobby -= ShowNotificationHandler;
             ResponseHandler.answer -= (x) => Invoke(new Action<object>(AnswerFormHandler), x);
             ResponseHandler.cancle -= () => Invoke(new Action(CancleHandler));
             ResponseHandler.start -= (x) => Invoke(new Action<object>(GamesHandler), x);
             ResponseHandler.gamesOver -= (x) => Invoke(new Action<object>(GameOver), x);
-            this.Close();
+            login.Dispose();
             this.Dispose();
+            login.Close();
+            this.Close();
+            
         }
 
         private void LobbyHandler()
