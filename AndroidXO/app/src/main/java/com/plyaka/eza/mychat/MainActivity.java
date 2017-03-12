@@ -47,32 +47,76 @@ import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnLogin, btnReg, btnInvite, btnRefresh, btnForget, btnLogout;
+    Button btnLogin, btnReg, btnInvite, btnRefresh, btnForget;
     EditText etPassword, etLogin, etEmail;
     ListView etClients;
     TextView tvName, tvStatus;
+
+    private String playerMove = "";
+    private String playerName = "";
+    private int roomNumber;
 
     private WebSocketClient mWebSocketClient;
     final Gson gson = new Gson();
 
     Request content;
-    Writer writer;
-    Reader reader;
 
     String[] names;
     Button[] gamebuttons = new Button[9];
     private static final String TAG = "MyActivity";
 
     private UiLifecycleHelper uiHelper;
-    private LoginButton enterByFB;
 
+    private LoginButton enterByFB;
     private GoogleApiClient client;
+
+    private void connectWebSocket() {
+        URI uri;
+
+        try {
+            uri = new URI("ws://192.168.0.98:9898");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            //etLogin.setText(e.toString());
+            return;
+        }
+
+        mWebSocketClient = new WebSocketClient(uri) {
+            @Override
+            public void onOpen(ServerHandshake serverHandshake) {
+                Log.i("Websocket", "Opened");
+            }
+
+            @Override
+            public void onMessage(String s) {
+                final String message = s;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMessage(message);
+                        Log.i("Websocket", message);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose(int i, String s, boolean b) {
+                Log.v(TAG, "Closed " + s);
+                Log.i("Websocket", "Closed " + s);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.v(TAG, "Error " + e.getMessage());
+                Log.i("Websocket", "Error " + e.getMessage());
+            }
+        };
+        mWebSocketClient.connect();
+    }
 
     public void setTvName(String tvName) {
         this.tvName.setText(tvName);
     }
-
-
 
     public void setEtClients(String[] names) {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -91,12 +135,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         connectWebSocket();
         btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnLogout = (Button) findViewById(R.id.btnLogout);
+     //   btnLogout = (Button) findViewById(R.id.btnLogout);
         btnReg = (Button) findViewById(R.id.btnReg);
         btnInvite = (Button) findViewById(R.id.btnInvite);
         btnRefresh = (Button) findViewById(R.id.btnRefresh);
         btnForget = (Button) findViewById(R.id.btnForget);
 
+        btnRefresh.setVisibility(View.GONE);
+        btnInvite.setVisibility(View.GONE);
 
         gamebuttons[0] = (Button) findViewById(R.id.bt1);
         gamebuttons[1] = (Button) findViewById(R.id.bt2);
@@ -132,18 +178,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        View btn = (View) findViewById(R.id.sign_in_button);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
-                        false, null, null, null, null);
-                startActivityForResult(intent, 123);
-
-            }
-        });
-
+       // View btn = (View) findViewById(R.id.sign_in_button);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+//                        false, null, null, null, null);
+//                startActivityForResult(intent, 123);
+//
+//            }
+//        });
 
         btnLogin.setOnClickListener(this);
         btnReg.setOnClickListener(this);
@@ -154,6 +199,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnRefresh.setEnabled(true);
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    public void goPlaying(String[] play) {
+        content = new Request("HandShake", "Ok", play);
+        SendPush(gson.toJson(content));
+    }
+
+    public void start(Request request) {
+        String[] arg = new Gson().fromJson(request.Args.toString(), String[].class);
+
+        double total = Double.parseDouble(arg[0]);
+        int x = (int) total;
+        roomNumber = x;
+        String t = Integer.toString(x);
+        content = new Request("Game", "Start", new Object[]{t, "XO", arg[2]});
+
+        SendPush(gson.toJson(content));
+    }
+
+    public void move(int number) {
+        content = new Request("Game", "Move", new Object[]{roomNumber, playerMove, number, playerName});
+        SendPush(gson.toJson(content));
     }
 
     public boolean inspection(String login, String password) {
@@ -187,6 +254,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return true;
     }
+
+    public void statusPlay(String args) {
+        if (args.equals(playerName)) {
+            playerMove = "X";
+            tvStatus.setText("play: " + playerMove + " go");
+        } else {
+            playerMove = "O";
+            tvStatus.setText("play: " + playerMove + " wait");
+
+        }
+
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -199,14 +279,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     content = new Request("Auth", "LogIn", new Object[]{login, password});
                     SendPush(gson.toJson(content));
                 }
-                break;
-            case R.id.btnLogout:
-                content = new Request("Auth", "LogIn", login);
-                SendPush(gson.toJson(content));
-                btnLogout.setVisibility(View.GONE);
-                btnLogin.setVisibility(View.VISIBLE);
 
                 break;
+           /* case R.id.btnLogout:
+                ShowLogin();
+                content = new Request("Auth", "LogOut", login);
+                SendPush(gson.toJson(content));
+
+
+                break;*/
             case R.id.btnReg:
                 if (inspection(login, password, email) == true) {
                     content = new Request("Auth", "Registration", new Object[]{login, password, email});
@@ -219,8 +300,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btnInvite:
                 Object player = GetSelectedPlayer();
-                content = new Request("HandShake", "Invite", new Object[]{player, "XO"});
-                SendPush(gson.toJson(content));
+
+                if(player == null) {
+                    AlertDialog.Builder dlgAlert = new AlertDialog.Builder(MainActivity.this);
+                    dlgAlert.setTitle("Error");
+                    dlgAlert.setMessage("User not selected");
+                    dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    dlgAlert.show();
+                }
+                else {
+                    content = new Request("HandShake", "Invite", new Object[]{player, "XO"});
+                    SendPush(gson.toJson(content));
+                }
                 break;
             case R.id.btnRefresh:
                 content = new Request("Lobby", "refreshClients", "null");
@@ -228,21 +323,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
 
-            case R.id.bt1: writer.move(0); break;
-            case R.id.bt2: writer.move(1); break;
-            case R.id.bt3: writer.move(2); break;
-            case R.id.bt4: writer.move(3); break;
-            case R.id.bt5: writer.move(4); break;
-            case R.id.bt6: writer.move(5); break;
-            case R.id.bt7: writer.move(6); break;
-            case R.id.bt8: writer.move(7); break;
-            case R.id.bt9: writer.move(8); break;
+            case R.id.bt1:
+                move(0);
+                break;
+            case R.id.bt2:
+                move(1);
+                break;
+            case R.id.bt3:
+                move(2);
+                break;
+            case R.id.bt4:
+                move(3);
+                break;
+            case R.id.bt5:
+                move(4);
+                break;
+            case R.id.bt6:
+                move(5);
+                break;
+            case R.id.bt7:
+                move(6);
+                break;
+            case R.id.bt8:
+                move(7);
+                break;
+            case R.id.bt9:
+                move(8);
+                break;
         }
     }
 
 
     private Object GetSelectedPlayer() {
-        return names[etClients.getCheckedItemPosition()];
+       if(etClients.getCount()>0) {
+           return  names[etClients.getCheckedItemPosition()];
+       }
+       return null;
     }
 
     public void SendPush(String info) {
@@ -255,48 +371,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void connectWebSocket() {
-        URI uri;
 
-        try {
-            uri = new URI("ws://192.168.0.101:9898");
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        mWebSocketClient = new WebSocketClient(uri) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.i("Websocket", "Opened");
-            }
-
-            @Override
-            public void onMessage(String s) {
-                final String message = s;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        reader.getMessage(message);
-                        Log.i("Websocket", message);
-                    }
-                });
-            }
-
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.v(TAG, "Closed " + s);
-                Log.i("Websocket", "Closed " + s);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.v(TAG, "Error " + e.getMessage());
-                Log.i("Websocket", "Error " + e.getMessage());
-            }
-        };
-        mWebSocketClient.connect();
-    }
 
     public void showAlert(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -311,8 +386,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
 
+    }
+    public void ShowLobby(String sender) {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(MainActivity.this);
+        dlgAlert.setTitle("GameOver");
+        dlgAlert.setMessage(sender);
+        dlgAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                for (Button b : gamebuttons) {
+                    b.setVisibility(View.GONE);
+                }
+                Button[] lobbybuttons = new Button[]{btnInvite, btnRefresh};
+                for (Button b : lobbybuttons) {
+                    b.setVisibility(View.VISIBLE);
+                }
+                etClients.setVisibility(View.VISIBLE);
+                tvStatus.setVisibility(View.GONE);
+            }
+        });
+        dlgAlert.show();
+    }
 
     public void showConfirm(String[] arg) {
         final String[] info = arg;
@@ -322,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alertDialog.setMessage("Player " + arg[0] + "vs " + arg[1] + " wants to play with you!");
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                writer.goPlaying(info);
+                goPlaying(info);
                 dialog.cancel();
             }
         });
@@ -336,12 +430,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // goPlaying(arg);
     }
 
+    public void ShowLogin(){
+        Button[] lobbybuttons = new Button[]{btnInvite, btnLogin, btnRefresh, btnReg, btnForget,  enterByFB};
+
+        for (Button b : lobbybuttons) {
+            b.setVisibility(View.VISIBLE);
+        }
+        etClients.setVisibility(View.VISIBLE);
+        etEmail.setVisibility(View.VISIBLE);
+        etPassword.setVisibility(View.VISIBLE);
+        etLogin.setVisibility(View.VISIBLE);
+        tvStatus.setVisibility(View.GONE);
+    }
     public void ShowGame() {
         for (Button b : gamebuttons) {
             b.setVisibility(View.VISIBLE);
+            b.setText("");
         }
 
-        Button[] lobbybuttons = new Button[]{btnInvite, btnLogin, btnRefresh, btnReg, btnForget, btnLogout};
+        Button[] lobbybuttons = new Button[]{btnInvite, btnLogin, btnRefresh, btnReg, btnForget,  enterByFB};
 
         for (Button b : lobbybuttons) {
             b.setVisibility(View.GONE);
@@ -352,30 +459,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etPassword.setVisibility(View.GONE);
         etLogin.setVisibility(View.GONE);
         tvStatus.setVisibility(View.VISIBLE);
-
     }
 
-    public void ShowLobby() {
-        for (Button b : gamebuttons) {
-            b.setVisibility(View.GONE);
-        }
 
-        Button[] lobbybuttons = new Button[]{btnInvite, btnLogin, btnRefresh, btnReg, btnForget, btnLogout};
 
-        for (Button b : lobbybuttons) {
-            b.setVisibility(View.VISIBLE);
-        }
-
-        etClients.setVisibility(View.VISIBLE);
-        etEmail.setVisibility(View.VISIBLE);
-        etPassword.setVisibility(View.VISIBLE);
-        etLogin.setVisibility(View.VISIBLE);
-        tvStatus.setVisibility(View.GONE);
-    }
 
 
     public void moveBtn(Object[] args) {
 
+        if (args[0].toString().equals(playerMove))
+        {
+            tvStatus.setText("play: " + playerMove + " wait");
+        }
+        else
+        {
+            tvStatus.setText("play: " + playerMove + " go");
+        }
         int i = 0;
         for (Button b : gamebuttons) {
             if (Integer.parseInt(args[1].toString()) == i++) {
@@ -383,6 +482,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
@@ -399,6 +499,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStart() {
         super.onStart();
+
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
@@ -406,11 +507,133 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onStop() {
         super.onStop();
+
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
 
+    public class Request {
+        String Module;
+        String Cmd;
+        Object Args;
 
+        public Request(String Module, String Cmd, Object Args) {
+            this.Module = Module;
+            this.Cmd = Cmd;
+            this.Args = Args;
+        }
+    }
+
+
+    public void getMessage(String tmp) {
+        Request request = new Gson().fromJson(tmp, Request.class);
+        switch (request.Module) {
+            case "Auth":
+                Authorization(request);
+                break;
+            case "Lobby":
+                Lobby(request);
+                break;
+            case "HandShake":
+                HandShake(request);
+                break;
+            case "Game":
+                Game(request);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void Authorization(Request response) {
+        switch (response.Cmd) {
+            case "LogIn": {
+                if (response.Args != null) {
+                    Button[] lobbybuttons = new Button[]{btnInvite, btnLogin, btnReg, btnForget};
+
+                    for (Button b : lobbybuttons) {
+                        b.setVisibility(View.GONE);
+                    }
+                    etEmail.setVisibility(View.GONE);
+                    etPassword.setVisibility(View.GONE);
+                    etLogin.setVisibility(View.GONE);
+
+                    btnRefresh.setVisibility(View.VISIBLE);
+                    btnInvite.setVisibility(View.VISIBLE);
+                    enterByFB.setVisibility(View.GONE);
+                    playerName = response.Args.toString();
+                    setTvName("Your name is: " + playerName);
+                    //btnLogout.setVisibility(View.VISIBLE);
+                    btnInvite.setEnabled(true);
+                    btnRefresh.setEnabled(true);
+                }
+            }
+        }
+
+    }
+
+    public void Lobby(Request response) {
+        switch (response.Cmd) {
+            case "refreshClients":
+                if (response.Args != null) {
+                    String[] personlist = new Gson().fromJson(response.Args.toString(), String[].class);
+                    String[] newpersonlist = new String[personlist.length];
+                    for (int i = 0; i < newpersonlist.length; i++) {
+                        newpersonlist[i] = personlist[i];
+                    }
+                    setEtClients(newpersonlist);
+                }
+                break;
+            case "Notification":
+                showAlert(response.Args.toString());
+                break;
+        }
+    }
+
+    public void HandShake(Request response) {
+        switch (response.Cmd) {
+            case "Wait":
+                break;
+            case "Invited":
+                String[] arg = new Gson().fromJson(response.Args.toString(), String[].class);
+                try {
+                    showConfirm(arg);
+                } catch (Exception e) {
+                    Log.i("ShowConfirm go game", e.toString());
+                }
+                break;
+            default:
+                break;
+
+
+        }
+    }
+
+    public void Game(Request response) {
+        String[] arg;
+        switch (response.Cmd) {
+
+            case "Over":
+                ShowLobby(response.Args.toString());
+               //
+                //               showAlert(arg[0].toString());
+                break;
+            case "Start":
+                arg = new Gson().fromJson(response.Args.toString(), String[].class);
+                String str = arg[2];
+                statusPlay(str);
+                start(response);
+                ShowGame();
+                break;
+            case "Move":
+                arg = new Gson().fromJson(response.Args.toString(), String[].class);
+                moveBtn(arg);
+                break;
+            default:
+                break;
+        }
+
+    }
 
     private Session.StatusCallback statusCallback = new Session.StatusCallback() {
         @Override
@@ -428,12 +651,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
         uiHelper.onResume();
     }
-
     @Override
     public void onPause() {
         super.onPause();
         uiHelper.onPause();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

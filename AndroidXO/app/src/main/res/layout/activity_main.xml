@@ -135,15 +135,7 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/btnLogin"
         android:layout_alignStart="@+id/btnReg" />
-    <Button
-        android:text="Log Out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:id="@+id/btnLogout"
-        android:layout_alignStart="@+id/btnReg"
-        android:visibility="invisible"/>
+
 
     <Button
         android:text="Registration"
@@ -163,15 +155,14 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/btnForget" />
 
-
-    <ListView
-        android:layout_width="150dp"
-        android:id="@+id/etClients"
-        android:layout_height="200dp"
+    <com.facebook.widget.LoginButton
+        android:id="@+id/fb_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        facebook:confirm_logout="false"
+        facebook:fetch_user_info="true"
         android:layout_below="@+id/btnForget"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_alignParentRight="true" />
 
 
     <Button
@@ -180,15 +171,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnRefresh"
         android:layout_below="@+id/etClients"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Invite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/btnInvite"
-        android:layout_below="@+id/btnRefresh"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -199,23 +183,29 @@
         android:layout_centerHorizontal="true"
          />
 
-    <com.facebook.widget.LoginButton
-        android:id="@+id/fb_login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/btnRefresh"
-        android:layout_below="@id/etClients"
-        facebook:confirm_logout="false"
-        facebook:fetch_user_info="true"/>
+    <ListView
+        android:layout_width="150dp"
+        android:id="@+id/etClients"
+        android:layout_height="200dp"
+        android:layout_below="@+id/bt7"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"/>
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/sign_in_button"
+    <Button
+        android:text="Invite"
+        android:id="@+id/btnInvite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fb_login_button"
+        android:layout_below="@+id/etClients"
+        android:layout_alignEnd="@+id/tvName"
+        android:visibility="invisible"/>
+    <!--Button
+        android:text="Log Out"
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/btnInvite"
-
-        />
-
+        android:layout_below="@id/etClients"
+        android:visibility="invisible"/-->
 
 </RelativeLayout>
