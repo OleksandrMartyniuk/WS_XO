@@ -165,12 +165,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AuthServer\AuthServer.csproj">
+    <ProjectReference Include="..\AuthServer\AuthServer.csproj">
       <Project>{c24cf4b5-8ab1-4f41-86e4-412baba9c244}</Project>
       <Name>AuthServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{0ee8b9a2-7341-4c15-9d4d-8c249e204ad2}</Project>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{ddff7148-70a8-419b-9b6f-45092ac5690d}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>

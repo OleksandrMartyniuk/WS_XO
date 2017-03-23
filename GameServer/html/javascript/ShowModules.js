@@ -11,7 +11,7 @@ function ShowLobby() {
     document.getElementById("playersList").style.display = 'flex';
     
     document.getElementById("label").innerHTML ="Your name: "+ sessionStorage['username'];
-    $(".gameField").val(function (index, x) { return " "; });
+    $(".gameField").val(" ");
 }
 function ShowGame() {
     document.getElementById("auth").style.display = 'none';
